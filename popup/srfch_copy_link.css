@@ -1,3 +1,13 @@
+.media-select {
+  font-weight: normal;
+}
 .media-select:hover {
   background-color: #cccccc;
+}
+.media-title {
+  font-weight: bold;
+}
+.url-txt {
+  visibility: visible;
+  height: 1px;
 }
