@@ -1,8 +1,16 @@
 
-document.addEventListener("load", function(event) {
+var contentLoaded = 0;
+
+window.addEventListener("load", function(event) {
     // send an empty message to the background script. This makes the toolbar-popup
     // being disabled (by default) and the context menu being removed (if it exists)
-    browser.runtime.sendMessage({});
+    if (!contentLoaded)
+    {
+        // only send this message once (otherwise already existing data could be
+        // reset to zero)
+        contentLoaded = 1;
+        browser.runtime.sendMessage({});
+    }
 }, true);
 window.addEventListener("beforeunload", function(event) {
     // send an empty message to the background script. This makes the toolbar-popup
@@ -10,16 +18,16 @@ window.addEventListener("beforeunload", function(event) {
     browser.runtime.sendMessage({});
 }, true);
 
-document.addEventListener("mousedown", function(event) {
+window.addEventListener("mousedown", function(event) {
     // right click
     // (this will probably trigger the context menu to pop up)
     if (event.button == 2)
     {
+        var idStr = '';
+        
         // check if (right-) clicked on a link
         if (event.target && event.target.closest('a'))
         {
-            var idStr = '';
-            
             // check if the "urn" data attribute is set, then we can easily extract the
             // media's ID from it
             var elemA = event.target.closest('a');
