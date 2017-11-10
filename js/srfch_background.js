@@ -42,12 +42,11 @@ function addSrfContextMenu()
 */
 function signalMediaAvailable()
 {
-    browser.browserAction.enable();
-    
-    for (var k=0; k<media.length; k++)
-    {
-        console.log("URL "+k+": "+media[k].desc+" ("+media[k].url+")");
-    }
+    var gettingActiveTab = browser.tabs.query({active: true, currentWindow: true});
+    gettingActiveTab.then((tabs) => {
+        var currentTabId = tabs[0].id;
+        browser.pageAction.show(currentTabId);
+    });
 }
 
 /*
@@ -56,7 +55,11 @@ function signalMediaAvailable()
 */
 function signalMediaDisable()
 {
-    browser.browserAction.disable();
+    var gettingActiveTab = browser.tabs.query({active: true, currentWindow: true});
+    gettingActiveTab.then((tabs) => {
+        var currentTabId = tabs[0].id;
+        browser.pageAction.hide(currentTabId);
+    });
     
     mediaTitle = "";
     var media = [];

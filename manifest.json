@@ -21,7 +21,7 @@
         }
     ],
     
-    "browser_action": {
+    "page_action": {
         "browser_style": true,
         "default_popup": "popup/srfch_copy_link.html",
         "default_icon": {
