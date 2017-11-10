@@ -451,7 +451,8 @@ browser.runtime.onMessage.addListener(srfchProcMsg);
     event listener for clicks on the add on's context menu entry
 */
 browser.contextMenus.onClicked.addListener(function(info, tab) {
-    if (info.menuItemId == "srfch_context") {
+    if (info.menuItemId == "srfch_context")
+    {
         if (mediaId[tab.id])
         {
             var cvisUrl = getCvisUrl(mediaId[tab.id]);
