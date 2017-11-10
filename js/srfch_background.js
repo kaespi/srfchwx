@@ -2,38 +2,28 @@
 // current number of context menu sub-items
 // (to know later on how many menu items have to be deleted)
 var contextMenuCreated = 0;
-var urlText = "";
 
 var isLastFileProc = 0;
 
-var mediaTitle = "";
+var mediaId = [];
+var mediaTitle = [];
 var media = [];
 
+var currentTabId = null;
+
+/*
+    addSrfContextMenu():
+    Creates the context menu entry to launch the URL extraction
+*/
 function addSrfContextMenu()
 {
     browser.contextMenus.create({
-        id: "srfch_link_top",
+        id: "srfch_context",
         title: "Extract SRF URLs",
-        contexts: ["link"],
+        contexts: ["link"]
     });
     
     contextMenuCreated = 1;
-
-    /*browser.contextMenus.create({
-        id: "srfch_link_c0",
-        parentId: "srfch_link_top",
-        title: "Link 1",
-        contexts: ["all"],
-    });
-
-    browser.contextMenus.create({
-        id: "srfch_link_c1",
-        parentId: "srfch_link_top",
-        title: "Link 2",
-        contexts: ["all"],
-    });
-    
-    numContextMenuLinks = 2;*/
 }
 
 /*
@@ -44,7 +34,7 @@ function signalMediaAvailable()
 {
     var gettingActiveTab = browser.tabs.query({active: true, currentWindow: true});
     gettingActiveTab.then((tabs) => {
-        var currentTabId = tabs[0].id;
+        currentTabId = tabs[0].id;
         browser.pageAction.show(currentTabId);
     });
 }
@@ -57,12 +47,12 @@ function signalMediaDisable()
 {
     var gettingActiveTab = browser.tabs.query({active: true, currentWindow: true});
     gettingActiveTab.then((tabs) => {
-        var currentTabId = tabs[0].id;
+        currentTabId = tabs[0].id;
         browser.pageAction.hide(currentTabId);
+        mediaId[currentTabId] = "";
+        mediaTitle[currentTabId] = "";
+        media[currentTabId] = [];
     });
-    
-    mediaTitle = "";
-    var media = [];
 }
 
 /*
@@ -85,8 +75,6 @@ function parseM3uPlaylist(e)
     // prepare the URL for later use...
     var url = this.responseURL;
     url = url.replace(/master.m3u8/g,"");
-    
-    console.log("url="+url);
     
     // check for tracks stored in the playlist (according to http://en.wikipedia.org/wiki/M3U 
     // such entries have an    #EXTINF on the previous line or according to 
@@ -133,7 +121,7 @@ function parseM3uPlaylist(e)
         // 3. remove the q*-information
         thisStreamURL_cmp = thisStreamURL_cmp.replace(/q[1-6]0,/gi,"");
         // check if this URL has not yet been stored in the URL array
-        for (var j=0; j<media.length; j++)
+        for (var j=0; j<media[currentTabId].length; j++)
         {
             // it seems that the master.m3u8 files are split into normal and high quality
             // streams. However, the high quality master.m3u8 files still contain also the 
@@ -141,7 +129,7 @@ function parseM3uPlaylist(e)
             // linked to the exact same streams. Therefore these values are sorted out 
             // here to prevent dupliate entries...
             // prepare the URL in the same way like above just outside the for-loop
-            var urlInMenu = media[j].url.replace(/http:\/\/[^\/]*\//i,"");
+            var urlInMenu = media[currentTabId][j].url.replace(/http:\/\/[^\/]*\//i,"");
             urlInMenu = urlInMenu.replace(/q[1-6]0,/gi,"");
             if (thisStreamURL_cmp==urlInMenu.replace(/\?[^\/]*$/i,""))
             {
@@ -152,10 +140,10 @@ function parseM3uPlaylist(e)
         
         if (isNewEntry)
         {
-            media[media.length] = {
+            media[currentTabId][media[currentTabId].length] = {
                     'guessed': false,
                     'url': thisStreamURL,
-                    'desc': mediaFilePlaylist[i].substring(18,idxNewline)
+                    'desc': 'M3U: ' + mediaFilePlaylist[i].substring(18,idxNewline)
                 };
         }
     }
@@ -255,10 +243,10 @@ function extractM3uPlaylist(jsonString)
 }
 
 /*
-    grabUrlContents():
-    Reads the contents of an URL and returns them as a string
+    readCvisUrl():
+    Reads the contents of an URL which contain information about the media URL
 */
-function grabUrlContents(url)
+function readCvisUrl(url)
 {
     // reqListener():
     // Handles the (asynchronous) read request answer
@@ -267,29 +255,29 @@ function grabUrlContents(url)
         var jsonResponse = JSON.parse(this.responseText);
         
         // try to get the title of the media file
-        mediaTitle = "";
+        mediaTitle[currentTabId] = "";
         if (jsonResponse.Video)
         {
             if (jsonResponse.Video.AssetMetadatas && jsonResponse.Video.AssetMetadatas.AssetMetadata
                 && jsonResponse.Video.AssetMetadatas.AssetMetadata[0].title)
             {
-                mediaTitle = jsonResponse.Video.AssetMetadatas.AssetMetadata[0].title;
+                mediaTitle[currentTabId] = jsonResponse.Video.AssetMetadatas.AssetMetadata[0].title;
             }
             else if (jsonResponse.Video.AssetSet && jsonResponse.Video.AssetSet.title)
             {
-                mediaTitle = jsonResponse.Video.AssetSet.title;
+                mediaTitle[currentTabId] = jsonResponse.Video.AssetSet.title;
             }
         }
         
         // no title found so far, just try to find some title string...
-        if (!mediaTitle)
+        if (!mediaTitle[currentTabId])
         {
             var titles = this.responseText.match(/"title":\s*"[^"]+"/g);
             if (titles.length >= 1)
             {
-                mediaTitle = titles[0].substr(7);
-                mediaTitle = mediaTitle.substr(0, mediaTitle.length-1); // remove the trailing quote
-                mediaTitle = mediaTitle.substr(mediaTitle.indexOf('"')+1);
+                mediaTitle[currentTabId] = titles[0].substr(7);
+                mediaTitle[currentTabId] = mediaTitle[currentTabId].substr(0, mediaTitle[currentTabId].length-1); // remove the trailing quote
+                mediaTitle[currentTabId] = mediaTitle[currentTabId].substr(mediaTitle[currentTabId].indexOf('"')+1);
             }
         }
         
@@ -393,106 +381,6 @@ function getCvisUrl(linkurl)
 }
 
 /*
-    readCvisUrl():
-    Downloads the data from the given address and parses the returned file for media URLs
-*/
-function readCvisUrl(url)
-{
-    var data = grabUrlContents( url );
-    
-    console.log("cvisUrl="+data);
-    
-    /*
-    streamingUrls.length = 0;
-    guessedUrls.length = 0;
-    playlistUrls.length = 0;
-    var tmp_data = data;
-    var k=0;
-    // looks for '"url":' portions after which follow the video URLs
-    var pos_url = tmp_data.search("rtmp\:");
-    // extract M3U playlist entries always
-    srfch.extractM3uPlaylist( tmp_data );
-    // update the current index (index of the next new free) menu entry
-    k = streamingUrls.length;
-    if( pos_url<=0 )
-    {
-        srfch.extractHiddenURL( tmp_data );
-    }
-    else
-    {
-        while( pos_url > 0 )
-        {
-            tmp_data = tmp_data.substring(pos_url);
-            // try to find the end of the URL
-            ind_end = tmp_data.search("[^a-zA-Z0-9\:\/\\\\\.\\&_-]");
-
-            // we don't want the part after the '?' (if there is any), full download of the file ;-) 
-            if (tmp_data.search("[?]")<ind_end && tmp_data.search("[?]")>0)
-            {
-                ind_end = tmp_data.search("[?]");
-            }
-
-            // unescape the extracted URL
-            streamingUrls[k] = tmp_data.substring(0,ind_end).replace(/\\\//g,"/");
-            guessedUrls[k] = false;
-            playlistUrls[k] = "";
-            tmp_data = tmp_data.substring(ind_end+1);
-
-            k++;
-            pos_url = tmp_data.search("rtmp\:");
-        }
-
-        if( streamingUrls.length==0 )
-        {
-            return;
-        }
-
-        // check if the HQ-video URL is missing (although it might be available
-        // on the RTMP server)
-        var lq_avail = false;
-        var mq_avail = false;
-        var hq_avail = false;
-        var url_ref = "";
-        for( k=0; k<streamingUrls.length; k++ )
-        {
-            if (streamingUrls[k].indexOf("_lq1") > 0)
-            {
-                lq_avail = true;
-                url_ref = streamingUrls[k].replace(/lq1/g,"xq1");
-            }
-            else if (streamingUrls[k].indexOf("_mq1") > 0)
-            {
-                mq_avail = true;
-                url_ref = streamingUrls[k].replace(/mq1/g,"xq1");
-            }
-            else if (streamingUrls[k].indexOf("_hq1") > 0)
-            {
-                hq_avail = true;
-                url_ref = streamingUrls[k].replace(/hq1/g,"xq1");
-            }
-        }
-        if (!lq_avail && url_ref.length>0)
-        {
-            guessedUrls[streamingUrls.length] = true;
-            playlistUrls[streamingUrls.length] = "";
-            streamingUrls[streamingUrls.length] = url_ref.replace(/xq1/g,"lq1");
-        }
-        if (!mq_avail && url_ref.length>0)
-        {
-            guessedUrls[streamingUrls.length] = true;
-            playlistUrls[streamingUrls.length] = "";
-            streamingUrls[streamingUrls.length] = url_ref.replace(/xq1/g,"mq1");
-        }
-        if (!hq_avail && url_ref.length>0)
-        {
-            guessedUrls[streamingUrls.length] = true;
-            playlistUrls[streamingUrls.length] = "";
-            streamingUrls[streamingUrls.length] = url_ref.replace(/xq1/g,"hq1");
-        }
-    }*/
-}
-
-/*
     srfchProcMsg():
     Process the messages received from the content script
 */
@@ -503,7 +391,7 @@ function srfchProcMsg(request, sender, sendResponse)
     if (contextMenuCreated)
     {
         // top-item
-        browser.contextMenus.remove("srfch_link_top");
+        browser.contextMenus.remove("srfch_context");
         contextMenuCreated = 0;
     }
     
@@ -511,15 +399,14 @@ function srfchProcMsg(request, sender, sendResponse)
     
     if (request.srfchId)
     {
-        // try to obtain the URL from where more details about the file could be obtained
-        var cvisUrl = getCvisUrl(request.srfchId);
+        var tabId = null;
+        var gettingActiveTab = browser.tabs.query({active: true, currentWindow: true});
+        gettingActiveTab.then((tabs) => {
+            currentTabId = tabs[0].id;
+            mediaId[currentTabId] = request.srfchId;
+        });
         
-        if (cvisUrl)
-        {
-            addSrfContextMenu();
-            console.log("cvisUrl: "+cvisUrl);
-            readCvisUrl(cvisUrl);
-        }
+        addSrfContextMenu();
     }
 }
 
@@ -528,3 +415,20 @@ function srfchProcMsg(request, sender, sendResponse)
     to function srfchProcMsg()
 */
 browser.runtime.onMessage.addListener(srfchProcMsg);
+
+/*
+    event listener for clicks on the add on's context menu entry
+*/
+browser.contextMenus.onClicked.addListener(function(info, tab) {
+    if (info.menuItemId == "srfch_context") {
+        if (mediaId[tab.id])
+        {
+            var cvisUrl = getCvisUrl(mediaId[tab.id]);
+            
+            if (cvisUrl)
+            {
+                readCvisUrl(cvisUrl);
+            }
+        }
+    }
+});
