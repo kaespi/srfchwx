@@ -55,16 +55,12 @@ function signalMediaAvailable()
     signalMediaDisable():
     Signal to the popup in the browser toolbar that currently nothing is available there
 */
-function signalMediaDisable()
+function signalMediaDisable(tabId)
 {
-    var gettingActiveTab = browser.tabs.query({active: true, currentWindow: true});
-    gettingActiveTab.then((tabs) => {
-        currentTabId = tabs[0].id;
-        browser.pageAction.hide(currentTabId);
-        mediaId[currentTabId] = "";
-        mediaTitle[currentTabId] = "";
-        media[currentTabId] = [];
-    });
+    browser.pageAction.hide(tabId);
+    mediaId[tabId] = "";
+    mediaTitle[tabId] = "";
+    media[tabId] = [];
 }
 
 /*
@@ -407,18 +403,41 @@ function srfchProcMsg(request, sender, sendResponse)
         contextMenuCreated = 0;
     }
     
-    signalMediaDisable();
-    
-    if (request.srfchId)
+    // if we got the tab-id already with the command, then we don't
+    // have to extract it once more...
+    if (sender.tab && (typeof sender.tab.id !== 'undefined'))
     {
-        var tabId = null;
+        currentTabId = sender.tab.id;
+        
+        // first reset the popup (and the underlying data)
+        signalMediaDisable(currentTabId);
+        
+        // second - if an ID is part of the request - process
+        // the ID information further
+        if (request.srfchId)
+        {
+            mediaId[currentTabId] = request.srfchId;
+            addSrfContextMenu();
+        }
+    }
+    else
+    {
+        // we need to find out which tab we're actually dealing with...
         var gettingActiveTab = browser.tabs.query({active: true, currentWindow: true});
         gettingActiveTab.then((tabs) => {
             currentTabId = tabs[0].id;
-            mediaId[currentTabId] = request.srfchId;
+            
+            // first reset the popup (and the underlying data)
+            signalMediaDisable(currentTabId);
+            
+            // second - if an ID is part of the request - process
+            // the ID information further
+            if (request.srfchId)
+            {
+                mediaId[currentTabId] = request.srfchId;
+                addSrfContextMenu();
+            }
         });
-        
-        addSrfContextMenu();
     }
 }
 
