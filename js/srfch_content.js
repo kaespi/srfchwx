@@ -1,5 +1,3 @@
-console.log("loaded content");
-
 
 document.addEventListener("load", function(event) {
     // send an empty message to the background script. This makes the toolbar-popup
@@ -11,7 +9,6 @@ window.addEventListener("beforeunload", function(event) {
     // being disabled (by default) and the context menu being removed (if it exists)
     browser.runtime.sendMessage({});
 }, true);
-
 
 document.addEventListener("mousedown", function(event) {
     // right click
@@ -70,15 +67,7 @@ document.addEventListener("mousedown", function(event) {
         
         // if the string with the ID was set then we can forward this information (via a
         // message) to the background script which can then do the actual extraction of
-        // the URLs and display the context menu
+        // the URLs
         browser.runtime.sendMessage({srfchId: idStr});
     }
 }, true); 
-
-/*browser.runtime.onMessage.addListener(notify);
-
-function notify(message) {
-    console.log("message received content");
-    
-    browser.runtime.sendMessage({ msgx: "abcblabla" });
-}*/
