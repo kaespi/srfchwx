@@ -1,0 +1,35 @@
+{
+    "manifest_version": 2,
+    "name": "SRF.ch",
+    "description": "An extension to display the URLs of video- and audio-files on the Swiss national television webpage (Swiss german and italian)",
+    "version": "2.0",
+
+    "icons": {
+        "48": "icons/srfch_48.png"
+    },
+
+    "background": {
+        "scripts": [
+            "js/srfch_background.js"
+        ]
+    },
+
+    "content_scripts": [
+        {
+            "matches": ["*://*.srf.ch/*"],
+            "js": ["js/srfch_content.js"]
+        }
+    ],
+    
+    "browser_action": {
+        "browser_style": true,
+        "default_popup": "popup/srfch_copy_link.html",
+        "default_icon": {
+            "48": "icons/srfch_48.png"
+        }
+    },
+
+    "permissions": [
+        "contextMenus"
+    ]
+}
