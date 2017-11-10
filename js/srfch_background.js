@@ -11,6 +11,18 @@ var media = [];
 
 var currentTabId = null;
 
+function outputMedia()
+{
+    console.log("#media entries: "+mediaId.length);
+    for (var k=0; k<mediaId.length; k++)
+    {
+        if (mediaId[k])
+        {
+            console.log("media[tab "+k+"] = "+mediaId[k]);
+        }
+    }
+}
+
 /*
     addSrfContextMenu():
     Creates the context menu entry to launch the URL extraction
