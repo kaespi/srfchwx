@@ -482,9 +482,10 @@ function getCvisUrl(linkurl)
         || linkurl.substring(0,30)=="http://videoportal.sf.tv/video" );
     var isStyle2 = ( linkurl.match(/tp\.srgssr\.ch.*video/g) ? 1 : 0 );
     var isStyle3 = ( linkurl.match(/urn:srf:.*:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/) ? 1 : 0 );
+    var isStyle4 = ( linkurl.match(/play.*id=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/) ? 1 : 0 );
     var isStyleRsi1 = ( linkurl.match(/urn:rsi:video:[0-9]{7}/) ? 1 : 0 );
     var isStyleRsi2 = ( linkurl.match(/rsi.ch\/play\/.*id=[0-9]{7}/) ? 1 : 0 );
-    if (!isStyle1 && !isStyle2 && !isStyle3 && !isStyleRsi1 && !isStyleRsi2)
+    if (!isStyle1 && !isStyle2 && !isStyle3 && !isStyle4 && !isStyleRsi1 && !isStyleRsi2)
     {
         return "";
     }
@@ -504,7 +505,7 @@ function getCvisUrl(linkurl)
             idStr = idStr.substring( 0, idx );
         }
     }
-    else if (isStyle2 || isStyle3)
+    else if (isStyle2 || isStyle3 || isStyle4)
     {
         var idMatch = linkurl.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
         if (idMatch.length)
