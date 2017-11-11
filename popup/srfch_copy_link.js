@@ -59,7 +59,13 @@ function onGotBg(page)
             var div = window.document.createElement("div");
             div.className = "media-select";
             div.dataset.url = page.media[popupTabId][k].url;
-            var txt = window.document.createTextNode(page.media[popupTabId][k].desc);
+            var desc = page.media[popupTabId][k].desc;
+            // prevent oversized descriptions...
+            if (desc.length > 90)
+            {
+                desc = desc.substr(0,70) + "....." + desc.substr(-19);
+            }
+            var txt = window.document.createTextNode(desc);
             div.appendChild(txt);
             window.document.body.appendChild(div);
         }
