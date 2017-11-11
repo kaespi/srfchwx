@@ -180,19 +180,24 @@ function extractNonM3uUrlsJson(jsonObj)
     {
         for (var ch=0; ch<jsonObj.chapterList.length; ch++)
         {
-            if (jsonObj.chapterList[ch].resourceList)
+            var chapter = jsonObj.chapterList[ch];
+            if (chapter.resourceList)
             {
-                for (var r=0; r<jsonObj.chapterList[ch].resourceList.length; r++)
+                for (var r=0; r<chapter.resourceList.length; r++)
                 {
-                    var res = jsonObj.chapterList[ch].resourceList[r];
+                    var res = chapter.resourceList[r];
                     if (res.url)
                     {
                         // found an URL, but now we also need to have some descriptive
                         // string for the URL (indicating the quality e.g.)
                         var desc = '';
+                        if (jsonObj.chapterList.length > 1 && chapter.title)
+                        {
+                            desc = chapter.title + ": ";
+                        }
                         if (res.protocol)
                         {
-                            desc = res.protocol;
+                            desc += res.protocol;
                         }
                         if (res.quality)
                         {
