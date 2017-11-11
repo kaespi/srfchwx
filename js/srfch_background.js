@@ -168,6 +168,142 @@ function parseM3uPlaylist(e)
 }
 
 /*
+    extractNonM3uUrlsJson():
+    Processes a JSON object and extracts the media URLs
+    in this file (which could be mp3 files, RTMP streams, ...)
+*/
+function extractNonM3uUrlsJson(jsonObj)
+{
+    var anyUrlFound = 0;
+    
+    if (jsonObj.chapterList)
+    {
+        for (var ch=0; ch<jsonObj.chapterList.length; ch++)
+        {
+            if (jsonObj.chapterList[ch].resourceList)
+            {
+                for (var r=0; r<jsonObj.chapterList[ch].resourceList.length; r++)
+                {
+                    var res = jsonObj.chapterList[ch].resourceList[r];
+                    if (res.url)
+                    {
+                        // found an URL, but now we also need to have some descriptive
+                        // string for the URL (indicating the quality e.g.)
+                        var desc = '';
+                        if (res.protocol)
+                        {
+                            desc = res.protocol;
+                        }
+                        if (res.quality)
+                        {
+                            desc += (desc ? ", " : "") + res.quality;
+                        }
+                        if (res.encoding)
+                        {
+                            desc += (desc ? ", " : "") + res.encoding;
+                        }
+                        
+                        media[currentTabId][media[currentTabId].length] = {
+                                'guessed': false,
+                                'url': res.url,
+                                'desc': desc
+                            };
+                        
+                        anyUrlFound = 1;
+                    }
+                }
+            }
+        }
+    }
+    
+    if (anyUrlFound)
+    {
+        signalMediaAvailable();
+    }
+    
+    return anyUrlFound;
+}
+
+/*
+    extractNonM3uUrlsAscii():
+    Parses some ASCII string and extracts the media URLs
+    in this file (which could be mp3 files, RTMP streams, ...)
+*/
+function extractNonM3uUrlsAscii(txt)
+{
+    var anyUrlFound = 0;
+    
+    // scan for RTMP files/streams
+    var rtmpUrls = txt.match( /rtmp:[^"<>]+/g );
+    if (rtmpUrls)
+    {
+        for (var k=0; k<rtmpUrls.length; k++)
+        {
+            var url_k = rtmpUrls[k];
+            var isNewEntry = 1;
+            
+            // check if this URL has not yet been stored in the URL array
+            for (var j=0; j<media[currentTabId].length; j++)
+            {
+                if (media[currentTabId][j].url === url_k)
+                {
+                    isNewEntry = 0;
+                    break;
+                }
+            }
+            
+            if (isNewEntry)
+            {
+                anyUrlFound = 1;
+                media[currentTabId][media[currentTabId].length] = {
+                        'guessed': false,
+                        'url': url_k,
+                        'desc': url_k
+                    };
+            }
+        }
+    }
+    
+    // scan for mp3 files/streams
+    var mp3Urls = txt.match( /http[^"<>]+mp3[^"<>]*/g );
+    if (mp3Urls)
+    {
+        for (var k=0; k<mp3Urls.length; k++)
+        {
+            var url_k = mp3Urls[k];
+            var isNewEntry = 1;
+            
+            // check if this URL has not yet been stored in the URL array
+            for (var j=0; j<media[currentTabId].length; j++)
+            {
+                if (media[currentTabId][j].url === url_k)
+                {
+                    isNewEntry = 0;
+                    break;
+                }
+            }
+            
+            if (isNewEntry)
+            {
+                anyUrlFound = 1;
+                media[currentTabId][media[currentTabId].length] = {
+                        'guessed': false,
+                        'url': url_k,
+                        'desc': url_k
+                    };
+            }
+        }
+    }
+    
+    if (anyUrlFound)
+    {
+        signalMediaAvailable();
+    }
+    
+    return anyUrlFound;
+}
+
+/*
     extractM3uPlaylist():
     Parses some text (typically it's a JSON string) and extracts the M3U playlist files
     and initiates the parsing of these files
@@ -179,7 +315,7 @@ function extractM3uPlaylist(jsonString)
     if (!playlistURL)
     {
         // it seems that there's no M3U URL stored for this media
-        return;
+        return false;
     }
     
     // pre-process the list of playlist files and add potential HQ playlists...
@@ -251,6 +387,8 @@ function extractM3uPlaylist(jsonString)
         oReq.open("GET", urlk, 1);
         oReq.send();
     }
+    
+    return true;
 }
 
 /*
@@ -263,11 +401,17 @@ function readCvisUrl(url)
     // Handles the (asynchronous) read request answer
     function reqListener () {
         // try to parse the response as JSON object
-        var jsonResponse = JSON.parse(this.responseText);
+        var jsonResponse;
+        var responseIsJson = 1;
+        try {
+            jsonResponse = JSON.parse(this.responseText);
+        } catch(e) {
+            responseIsJson = 0;
+        }
         
         // try to get the title of the media file
         mediaTitle[currentTabId] = "";
-        if (jsonResponse.Video)
+        if (responseIsJson && jsonResponse.Video)
         {
             if (jsonResponse.Video.AssetMetadatas && jsonResponse.Video.AssetMetadatas.AssetMetadata
                 && jsonResponse.Video.AssetMetadatas.AssetMetadata[0].title)
@@ -279,12 +423,16 @@ function readCvisUrl(url)
                 mediaTitle[currentTabId] = jsonResponse.Video.AssetSet.title;
             }
         }
+        else if (responseIsJson && jsonResponse.episode && jsonResponse.episode.title)
+        {
+            mediaTitle[currentTabId] = jsonResponse.episode.title;
+        }
         
         // no title found so far, just try to find some title string...
         if (!mediaTitle[currentTabId])
         {
-            var titles = this.responseText.match(/"title":\s*"[^"]+"/g);
-            if (titles.length >= 1)
+            var titles = this.responseText.match(/"title"\s*:\s*"[^"]+"/g);
+            if (titles && titles.length >= 1)
             {
                 mediaTitle[currentTabId] = titles[0].substr(7);
                 mediaTitle[currentTabId] = mediaTitle[currentTabId].substr(0, mediaTitle[currentTabId].length-1); // remove the trailing quote
@@ -293,7 +441,20 @@ function readCvisUrl(url)
         }
         
         // try to find the media files as M3U playlists
-        extractM3uPlaylist(this.responseText);
+        if (!extractM3uPlaylist(this.responseText))
+        {
+            // try to find non-M3U media URLs in the file
+            var fileParsed = 0;
+            if (responseIsJson)
+            {
+                fileParsed = extractNonM3uUrlsJson(jsonResponse);
+            }
+            
+            if (!fileParsed)
+            {
+                extractNonM3uUrlsAscii(this.responseText);
+            }
+        }
     }
 
     var oReq = new XMLHttpRequest();
@@ -374,7 +535,7 @@ function getCvisUrl(linkurl)
         }
         else if (linkurl.indexOf("audio")>=0)
         {
-            return "http://www.srf.ch/webservice/ais/report/audio/withLiveStreams/"+idStr+".xml";
+            return "https://il.srgssr.ch/integrationlayer/2.0/srf/mediaComposition/audio/"+idStr+".json";
         }
         else if (linkurl.indexOf("video")>=0)
         {
@@ -459,6 +620,7 @@ browser.contextMenus.onClicked.addListener(function(info, tab)
             
             if (cvisUrl)
             {
+                console.log("reading URL "+cvisUrl);
                 readCvisUrl(cvisUrl);
             }
         }
