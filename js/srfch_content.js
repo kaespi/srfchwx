@@ -1,7 +1,7 @@
 
 var contentLoaded = 0;
 
-window.addEventListener("load", function(event) {
+document.addEventListener("load", function(event) {
     // send an empty message to the background script. This makes the toolbar-popup
     // being disabled (by default) and the context menu being removed (if it exists)
     if (!contentLoaded)

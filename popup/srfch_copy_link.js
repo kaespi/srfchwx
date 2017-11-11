@@ -40,25 +40,29 @@ document.addEventListener("click", function(e) {
 */
 function onGotBg(page)
 {
-    var title = page.mediaTitle[popupTabId];
-    if (!title)
+    // only add some elements to the popup if URLs are available...
+    if (page.media[popupTabId].length > 0)
     {
-        title = "untitled: (click to copy URL)";
-    }
-    var divTitle = window.document.createElement("div");
-    divTitle.className = "media-title";
-    var txtTitle = window.document.createTextNode(page.mediaTitle[popupTabId]+": (click to copy URL)");
-    divTitle.appendChild(txtTitle);
-    window.document.body.appendChild(divTitle);
-    
-    for (var k=0; k<page.media[popupTabId].length; k++)
-    {
-        var div = window.document.createElement("div");
-        div.className = "media-select";
-        div.dataset.url = page.media[popupTabId][k].url;
-        var txt = window.document.createTextNode(page.media[popupTabId][k].desc);
-        div.appendChild(txt);
-        window.document.body.appendChild(div);
+        var title = page.mediaTitle[popupTabId];
+        if (!title)
+        {
+            title = "untitled: (click to copy URL)";
+        }
+        var divTitle = window.document.createElement("div");
+        divTitle.className = "media-title";
+        var txtTitle = window.document.createTextNode(page.mediaTitle[popupTabId]+": (click to copy URL)");
+        divTitle.appendChild(txtTitle);
+        window.document.body.appendChild(divTitle);
+        
+        for (var k=0; k<page.media[popupTabId].length; k++)
+        {
+            var div = window.document.createElement("div");
+            div.className = "media-select";
+            div.dataset.url = page.media[popupTabId][k].url;
+            var txt = window.document.createTextNode(page.media[popupTabId][k].desc);
+            div.appendChild(txt);
+            window.document.body.appendChild(div);
+        }
     }
 }
 

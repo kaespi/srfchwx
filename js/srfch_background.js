@@ -29,7 +29,7 @@ function outputMedia()
 */
 function addSrfContextMenu()
 {
-    browser.contextMenus.create({
+    var ret = browser.contextMenus.create({
         id: "srfch_context",
         title: "Extract SRF URLs",
         contexts: ["link"]
@@ -47,6 +47,9 @@ function signalMediaAvailable()
     var gettingActiveTab = browser.tabs.query({active: true, currentWindow: true});
     gettingActiveTab.then((tabs) => {
         currentTabId = tabs[0].id;
+        browser.pageAction.setIcon({
+            tabId: currentTabId,
+            path: {"48": "icons/srfch_48.png" } });
         browser.pageAction.show(currentTabId);
     });
 }
@@ -394,15 +397,6 @@ function getCvisUrl(linkurl)
 */
 function srfchProcMsg(request, sender, sendResponse)
 {
-    // first remove the context menu for the SRF URLs and
-    // disable the toolbar button (will be activated later)
-    if (contextMenuCreated)
-    {
-        // top-item
-        browser.contextMenus.remove("srfch_context");
-        contextMenuCreated = 0;
-    }
-    
     // if we got the tab-id already with the command, then we don't
     // have to extract it once more...
     if (sender.tab && (typeof sender.tab.id !== 'undefined'))
@@ -417,7 +411,6 @@ function srfchProcMsg(request, sender, sendResponse)
         if (request.srfchId)
         {
             mediaId[currentTabId] = request.srfchId;
-            addSrfContextMenu();
         }
     }
     else
@@ -435,11 +428,17 @@ function srfchProcMsg(request, sender, sendResponse)
             if (request.srfchId)
             {
                 mediaId[currentTabId] = request.srfchId;
-                addSrfContextMenu();
             }
         });
     }
 }
+
+// add the SRF context menu (by default for all links)
+// (originally I thought I want to add the context menu entry once a message is
+// received from the content script. But apparently the context menu could be
+// rendered before the message in the background script is processed. Therefore
+// the context menu is added permanently)
+addSrfContextMenu();
 
 /*
     event listener for messages from the content script. Assign the messages
@@ -450,7 +449,8 @@ browser.runtime.onMessage.addListener(srfchProcMsg);
 /*
     event listener for clicks on the add on's context menu entry
 */
-browser.contextMenus.onClicked.addListener(function(info, tab) {
+browser.contextMenus.onClicked.addListener(function(info, tab)
+{
     if (info.menuItemId == "srfch_context")
     {
         if (mediaId[tab.id])
@@ -461,6 +461,14 @@ browser.contextMenus.onClicked.addListener(function(info, tab) {
             {
                 readCvisUrl(cvisUrl);
             }
+        }
+        else
+        {
+            // mark as nothing found
+            browser.pageAction.setIcon({
+                tabId: tab.id,
+                path: {"48": "icons/srfch_disabled_48.png" } });
+            browser.pageAction.show(tab.id);
         }
     }
 });
