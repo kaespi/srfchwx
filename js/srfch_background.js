@@ -1,8 +1,4 @@
 
-// current number of context menu sub-items
-// (to know later on how many menu items have to be deleted)
-var contextMenuCreated = 0;
-
 var isLastFileProc = 0;
 
 var mediaId = [];
@@ -29,13 +25,21 @@ function outputMedia()
 */
 function addSrfContextMenu()
 {
-    var ret = browser.contextMenus.create({
+    // on RSI pages we have to check not only links. Therefore we add two
+    // context menu entries. One for srf.ch and one for rsi.ch. But since
+    // we're only surfing on one at a time they won't popup at the concurrently
+    browser.contextMenus.create({
         id: "srfch_context",
         title: "Extract SRF URLs",
+        documentUrlPatterns: ["*://*.srf.ch/*"],
         contexts: ["link"]
     });
-    
-    contextMenuCreated = 1;
+    browser.contextMenus.create({
+        id: "rsich_context",
+        title: "Extract RSI URLs",
+        documentUrlPatterns: ["*://*.rsi.ch/*"],
+        contexts: ["link", "video", "audio"]
+    });
 }
 
 /*
@@ -618,7 +622,8 @@ browser.runtime.onMessage.addListener(srfchProcMsg);
 */
 browser.contextMenus.onClicked.addListener(function(info, tab)
 {
-    if (info.menuItemId == "srfch_context")
+    if (info.menuItemId == "srfch_context" ||
+        info.menuItemId == "rsich_context")
     {
         if (mediaId[tab.id])
         {
@@ -632,10 +637,20 @@ browser.contextMenus.onClicked.addListener(function(info, tab)
         }
         else
         {
-            // mark as nothing found
-            browser.pageAction.setIcon({
-                tabId: tab.id,
-                path: {"48": "icons/srfch_disabled_48.png" } });
+            if (info.menuItemId == "srfch_context")
+            {
+                // mark as nothing found
+                browser.pageAction.setIcon({
+                    tabId: tab.id,
+                    path: {"32": "icons/srfch_disabled_32.png", "48": "icons/srfch_disabled_48.png"} });
+            }
+            else if (info.menuItemId == "rsich_context")
+            {
+                // mark as nothing found
+                browser.pageAction.setIcon({
+                    tabId: tab.id,
+                    path: {"32": "icons/rsich_disabled_32.png", "48": "icons/rsich_disabled_48.png"} });
+            }
             browser.pageAction.show(tab.id);
         }
     }
