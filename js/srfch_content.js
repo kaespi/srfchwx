@@ -97,6 +97,76 @@ window.addEventListener("mousedown", function(event) {
     }
 }, true); 
 
+// the rsi.ch page is a bit a tricky case, because it embeds the videos in iframes
+// whose source is on srgssr.ch. Therefore we have some cross-domain problem. Since
+// the content script is not allowed to interfere with the iframes and cannot catch
+// mouse events there, we just have to add some visual element close to the iframe
+// (similar like for the srf.ch/play page)
+if (document.documentURI && (document.documentURI.indexOf("rsi.ch") >= 0))
+{
+    var iframes = document.getElementsByTagName("iframe");
+    if (iframes)
+    {
+        for (var k=0; k<iframes.length; k++)
+        {
+            if (iframes[k].src.indexOf("srgssr.ch") >= 0)
+            {
+                var urnrsi = iframes[k].src.match(/urn:rsi:video:[0-9]{7}/);
+                if (urnrsi.length==1)
+                {
+                    addRsiVideoBanner(iframes[k], urnrsi[0]);
+                }
+            }
+        }
+    }
+}
+
+/*
+    addRsiVideoBanner():
+    Since on rsi.ch the videos are 
+*/
+function addRsiVideoBanner(iframe, urn)
+{
+    // check if this event has already fired and there's already a download link
+    // node added to the page.
+    if (document.getElementsByClassName("srfchaddon").length > 0)
+    {
+        return;
+    }
+    
+    var nodeParent = iframe.parentNode;
+    
+    // add the following HTML code to the current document's DOM tree:
+    // <div style="text-align:center">
+    //     <img class="srfchaddon" src="http://addons.cdn.mozilla.net/user-media/addon_icons/413/413748-64.png" />
+    //       Download URLs for this video (right-click)
+    //     <br/>
+    //     <br/>
+    // </div>
+    var downloadImg = document.createElement("img");
+    downloadImg.setAttribute("class", "srfchaddon");
+    downloadImg.setAttribute("src", "http://addons.cdn.mozilla.net/user-media/addon_icons/413/413748-64.png");
+    
+    var downloadA   = document.createElement("a");
+    downloadA.setAttribute("href", iframe.src);
+    downloadA.dataset.urn = urn;
+    
+    // set text of link
+    var downloadAtext = document.createTextNode(" Download URLs for this video (right-click)");
+    downloadA.appendChild(downloadAtext);
+    
+    var downloadDiv = document.createElement("div");
+    downloadDiv.setAttribute("style", "text-align:center");
+    downloadDiv.appendChild(downloadImg);
+    downloadDiv.appendChild(downloadA);
+    
+    // (two) bracket returns
+    downloadDiv.appendChild(document.createElement('br'));
+    downloadDiv.appendChild(document.createElement('br'));
+    
+    nodeParent.insertBefore(downloadDiv, iframe);
+}
+
 /*
     addSrfPlayBanner():
     On some srf.ch pages (in particular srf.ch/play/...) the ID of the video is directly

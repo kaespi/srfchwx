@@ -5,6 +5,9 @@ var mediaId = [];
 var mediaTitle = [];
 var media = [];
 
+var akamaiToken = [];
+var m3uUrls = [];
+
 var currentTabId = null;
 
 function outputMedia()
@@ -38,7 +41,7 @@ function addSrfContextMenu()
         id: "rsich_context",
         title: "Extract RSI URLs",
         documentUrlPatterns: ["*://*.rsi.ch/*"],
-        contexts: ["link", "video", "audio"]
+        contexts: ["link"]
     });
 }
 
@@ -68,6 +71,48 @@ function signalMediaDisable(tabId)
     mediaId[tabId] = "";
     mediaTitle[tabId] = "";
     media[tabId] = [];
+}
+
+/*
+    parseAkamaiToken():
+    Parses the response from the Akamai server for the authorization token and launches
+    the HTTP queries for the (queued) m3u URLs
+*/
+function parseAkamaiToken(e)
+{
+    if (this.responseText)
+    {
+        for (var k=0; k<m3uUrls[currentTabId].length; k++)
+        {
+            var urlk = m3uUrls[currentTabId][k];
+            
+            // try to parse the response as JSON object
+            var jsonResponse;
+            var responseIsJson = 1;
+            try {
+                jsonResponse = JSON.parse(this.responseText);
+            } catch(e) {
+                responseIsJson = 0;
+            }
+            
+            if (responseIsJson && jsonResponse.token
+                && jsonResponse.token.authparams)
+            {
+                var token = jsonResponse.token.authparams;
+                urlk += "?" + token;
+            }
+            
+            // read the M3U playlist file using an (asynchronous) HTTP request
+            var oReq = new XMLHttpRequest();
+            oReq.addEventListener("load", parseM3uPlaylist);
+            
+            // asynchronously read the contents of the given URL
+            oReq.open("GET", urlk, 1);
+            oReq.send();
+        }
+    }
+    
+    m3uUrls[currentTabId] = [];
 }
 
 /*
@@ -368,6 +413,8 @@ function extractM3uPlaylist(jsonString)
     }
     
     isLastFileProc = 0;
+    m3uUrls[currentTabId] = [];
+    var akamaiTokenRequested = 0;
     
     // check each obtained playlist file...
     for (var k=0; k<playlistURL.length; k++)
@@ -388,13 +435,35 @@ function extractM3uPlaylist(jsonString)
             urlk = urlk.replace("https://codch-vh.akamaihd.net", "http://codww-vh.akamaihd.net");
         }
         
-        // read the M3U playlist file using an (asynchronous) HTTP request
-        var oReq = new XMLHttpRequest();
-        oReq.addEventListener("load", parseM3uPlaylist);
-        
-        // asynchronously read the contents of the given URL
-        oReq.open("GET", urlk, 1);
-        oReq.send();
+        // ok, for RSI we need some Akamai token to be allowed to read/parse the master.m3u8
+        // file we would like to, therefore we have to grad this one first...
+        if (urlk.indexOf("/i/rsi/"))
+        {        
+            m3uUrls[currentTabId][m3uUrls[currentTabId].length] = urlk;
+            
+            if (!akamaiTokenRequested)
+            {
+                akamaiTokenRequested = 1;
+                
+                // read the token file using an (asynchronous) HTTP request
+                var oReq = new XMLHttpRequest();
+                oReq.addEventListener("load", parseAkamaiToken);
+                
+                // asynchronously read the contents of the given URL
+                oReq.open("GET", "https://tp.srgssr.ch/akahd/token?acl=/i/rsi/*", 1);
+                oReq.send();
+            }
+        }
+        else
+        {
+            // read the M3U playlist file using an (asynchronous) HTTP request
+            var oReq = new XMLHttpRequest();
+            oReq.addEventListener("load", parseM3uPlaylist);
+            
+            // asynchronously read the contents of the given URL
+            oReq.open("GET", urlk, 1);
+            oReq.send();
+        }
     }
     
     return true;
