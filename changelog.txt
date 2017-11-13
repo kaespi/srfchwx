@@ -1,0 +1,110 @@
+Changelog SRF.ch
+================
+
+srfch 2.0.0
+    * Ported the add-on to the new WebExtensions standard (which resulted in some small
+      changes in its behavior)
+
+srfch 1.2.3
+    * Made add-on work with https:// URLs (in a trivial way)
+
+srfch 1.2.2
+    * Fixed bug in srf.ch URL retrieval
+
+srfch 1.2.1
+    * Added support for RSI (www.rsi.ch), thanks to Rossano Gobbi
+    * Removed deprecated call to newChannelFromURI and changed to newChannelFromURI2
+
+srfch 1.1.16
+    * SRF changed the URL from where to get information about a media using
+      the unique ID
+
+srfch 1.1.15
+    * better get the media file's unique ID from the srf.ch webpage by following
+      "hidden" links
+
+srfch 1.1.14
+    * also grab the media file's unique ID from the data-urn attribute (makes
+      URL extraction work again on some Javascript click style links)
+
+srfch 1.1.13
+    * only implementation improvements
+
+srfch 1.1.12
+    * Added a link to the srf.ch/play... pages to keep compatibility with
+      the new srf.ch player webpage (since around July 2015)
+
+srfch 1.1.11
+    * Added compatibility for new srf.ch URLs (since end of January 2015)
+    * Added guessing of medium high qualitz M3U media stream files (q50)
+
+srfch 1.1.10
+
+    * Added guessing of high quality M3U media stream files, giving access
+      to HQ videos
+
+srfch 1.1.9
+
+    * Bugfix: Audio URLs properly read out
+
+srfch 1.1.8
+
+    * Bugfix: Removed debug outputs
+
+srfch 1.1.7
+
+    * Bugfix: M3U entries are no more overwritten by "regular" RTMP URLs, i.e.
+      all M3U entries are always output
+    * Prevention of displaying duplicate M3U entries
+    * Added 5 new potential entries
+
+srfch 1.1.6
+
+    * Bugfix: M3U entries are no more overwritten by guessed RTMP URLs, i.e.
+      all M3U entries are always output
+
+srfch 1.1.5
+
+    * Adds M3U entries to the context menu for each media (due to RTMP
+      sometimes failing - as of September 2013)
+
+srfch 1.1.4
+
+    * For media files which have no RTMP URL available the add-on tries
+      to find the URLs of M3U playlists which can be played with any
+      media player capable of handling M3U playlists (such as e.g. VLC).
+      Those M3U playlist URLs show up with leading "M3U:" and the M3U
+      description of the media file (look for the BANDWIDTH entry!)
+
+srfch 1.1.3
+
+    * The URLs of HQ-videos in the archive are guessed (because usually they
+      are available from the RTMP-server, although not indicated)
+    * URLs which are guessed are marked with a leading asterisk * in the
+      context menu
+
+srfch 1.1.2
+
+    * Now also the extraction of URLs of videos in the archive (old
+      sf.tv videoplayer) available
+    * Added the capability to extract URLs of spielfilm videos
+      (feature films) which are no longer available directly from the web
+
+srfch 1.1.1
+
+    * Added the capability to extract URLs of DOK videos (documentary
+      movies) which are no longer available directly from the web
+
+srfch 1.1.0
+
+    * Added the option to extract URLs of Tatort videos that are
+      time-blocked from 06:00 - 20:00 (CET)
+
+srfch 1.0.1
+
+    * Removed unnecessary content
+    * Moved all content and locale to the chrome directory
+
+srfch 1.0.0
+
+    * Initial release.
