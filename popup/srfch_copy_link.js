@@ -17,15 +17,15 @@ document.addEventListener("click", function(e) {
             //  2. fill the textarea with the URL
             textarea.appendChild(txtUrl);
             window.document.body.appendChild(textarea);
-            
+
             //  3. select the textarea's contents (i.e. the URL)
             textarea.select();
             //  4. copy the selected text to clipboard
             document.execCommand("Copy");
-            
+
             //  5. delete the textarea again
             textarea.parentNode.removeChild(textarea);
-            
+
             window.close();
             return;
         }
@@ -53,7 +53,7 @@ function onGotBg(page)
         var txtTitle = window.document.createTextNode(page.mediaTitle[popupTabId]+": (click to copy URL)");
         divTitle.appendChild(txtTitle);
         window.document.body.appendChild(divTitle);
-        
+
         for (var k=0; k<page.media[popupTabId].length; k++)
         {
             var div = window.document.createElement("div");
@@ -74,7 +74,7 @@ function onGotBg(page)
 
 /*
     onBgError(page):
-    Function called after the popup is opened and the background page is not available. 
+    Function called after the popup is opened and the background page is not available.
 */
 function onBgError(error)
 {
@@ -102,7 +102,7 @@ while (divs[0])
 var gettingActiveTab = browser.tabs.query({active: true, currentWindow: true});
 gettingActiveTab.then((tabs) => {
     popupTabId = tabs[0].id;
-    
+
     var getting = browser.runtime.getBackgroundPage();
     getting.then(onGotBg, onBgError);
 });
