@@ -30,14 +30,40 @@ if (!contentLoaded)
     browser.runtime.sendMessage({});
 }
 
-if (document.documentURI
-    && document.documentURI.match(/srf\.ch\/play\/.*\/video\/.*id=[-a-zA-Z0-9]{36}/g))
-{
-    addSrfPlayBanner();
-}
-
-
 document.addEventListener("load", function(event) {
+    // on srf.ch/play pages the video usually just starts without given this add-on the
+    // possibility to extract the video's URL, although the id of the video is nicely
+    // contained in the URL. If this is the case then add a banner on top of the video
+    // to make this add-on work even in this situation
+    if (document.documentURI
+        && document.documentURI.match(/srf\.ch\/play\/.*\/video\/.*id=[-a-zA-Z0-9]{36}/g))
+    {
+        addSrfPlayBanner();
+    }
+    // the rsi.ch page is a bit a tricky case, because it embeds the videos in iframes
+    // whose source is on srgssr.ch. Therefore we have some cross-domain problem. Since
+    // the content script is not allowed to interfere with the iframes and cannot catch
+    // mouse events there, we just have to add some visual element close to the iframe
+    // (similar like for the srf.ch/play page)
+    else if (document.documentURI && (document.documentURI.indexOf("rsi.ch") >= 0))
+    {
+        var iframes = document.getElementsByTagName("iframe");
+        if (iframes)
+        {
+            for (var k=0; k<iframes.length; k++)
+            {
+                if (iframes[k].src.indexOf("srgssr.ch") >= 0)
+                {
+                    var urnrsi = iframes[k].src.match(/urn:rsi:video:[0-9]{7}/);
+                    if (urnrsi.length==1)
+                    {
+                        addRsiVideoBanner(iframes[k], urnrsi[0]);
+                    }
+                }
+            }
+        }
+    }
+
     // send an empty message to the background script. This makes the toolbar-popup
     // being disabled (by default) and the context menu being removed (if it exists)
     if (!contentLoaded)
@@ -48,6 +74,7 @@ document.addEventListener("load", function(event) {
         browser.runtime.sendMessage({});
     }
 }, true);
+
 window.addEventListener("beforeunload", function(event) {
     // send an empty message to the background script. This makes the toolbar-popup
     // being disabled (by default) and the context menu being removed (if it exists)
@@ -112,34 +139,9 @@ window.addEventListener("mousedown", function(event) {
         // if the string with the ID was set then we can forward this information (via a
         // message) to the background script which can then do the actual extraction of
         // the URLs
-        console.log("content: send id: "+idStr);
         browser.runtime.sendMessage({srfchId: idStr});
     }
 }, true);
-
-// the rsi.ch page is a bit a tricky case, because it embeds the videos in iframes
-// whose source is on srgssr.ch. Therefore we have some cross-domain problem. Since
-// the content script is not allowed to interfere with the iframes and cannot catch
-// mouse events there, we just have to add some visual element close to the iframe
-// (similar like for the srf.ch/play page)
-if (document.documentURI && (document.documentURI.indexOf("rsi.ch") >= 0))
-{
-    var iframes = document.getElementsByTagName("iframe");
-    if (iframes)
-    {
-        for (var k=0; k<iframes.length; k++)
-        {
-            if (iframes[k].src.indexOf("srgssr.ch") >= 0)
-            {
-                var urnrsi = iframes[k].src.match(/urn:rsi:video:[0-9]{7}/);
-                if (urnrsi.length==1)
-                {
-                    addRsiVideoBanner(iframes[k], urnrsi[0]);
-                }
-            }
-        }
-    }
-}
 
 /*
     addRsiVideoBanner():
