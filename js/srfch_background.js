@@ -1,14 +1,28 @@
 
+// since a M3U playlist file may link to multiple further playlist files and they are processed
+// asynchronously we have to know when the last one was processed such that afterwards to pageAction
+// can be enabled
 var isLastFileProc = 0;
 
+// array containing for each tab the ID of the media on which the right-click happened
 var mediaId = [];
+// array containing for each tab the title of the media for which the URLs were extracted
 var mediaTitle = [];
+// array consisting of for each tab an array with the URLs. Each entry a struct of type
+//  {
+//    'guessed': <false or true, legacy, right now not used>,
+//    'url':     <URL of the video/audio stream/file>,
+//    'desc':    <some descriptive string for this particular URL (e.g. for quality/resolution/...)
+//  }
 var media = [];
+// array containing for each tab the string denoting the broadcaster (either 'rsi' or empty). This
+// one is used to check which icon should be displayed
 var broadcaster = [];
 
-var akamaiToken = [];
+// array consisting of for each tab an array of M3U URLs to be downloaded/parsed with Akamai token
 var m3uUrls = [];
 
+// id of the tab currently opened/processed
 var currentTabId = null;
 
 function outputMedia()
