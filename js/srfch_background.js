@@ -4,6 +4,7 @@ var isLastFileProc = 0;
 var mediaId = [];
 var mediaTitle = [];
 var media = [];
+var broadcaster = [];
 
 var akamaiToken = [];
 var m3uUrls = [];
@@ -57,9 +58,18 @@ function signalMediaAvailable(numMediaFound)
         browser.pageAction.setTitle({
             tabId: currentTabId,
             title: numMediaFound + " " + browser.i18n.getMessage("pageActionNUrlsFound") });
-        browser.pageAction.setIcon({
-            tabId: currentTabId,
-            path: {"48": "icons/srfch_48.png" } });
+        if (broadcaster[currentTabId] === "rsi")
+        {
+            browser.pageAction.setIcon({
+                tabId: currentTabId,
+                path: { "32": "icons/rsich_32.png", "48": "icons/rsich_48.png" } });
+        }
+        else
+        {
+            browser.pageAction.setIcon({
+                tabId: currentTabId,
+                path: { "32": "icons/srfch_32.png", "48": "icons/srfch_48.png" } });
+        }
         browser.pageAction.show(currentTabId);
     });
 }
@@ -77,6 +87,7 @@ function signalMediaDisable(tabId)
     mediaId[tabId] = "";
     mediaTitle[tabId] = "";
     media[tabId] = [];
+    broadcaster[tabId] = "";
 }
 
 /*
@@ -726,6 +737,11 @@ browser.contextMenus.onClicked.addListener(function(info, tab)
             if (cvisUrl)
             {
                 console.log("reading URL "+cvisUrl);
+                broadcaster[tab.id] = "";
+                if (cvisUrl.indexOf("rsi") >= 0)
+                {
+                    broadcaster[tab.id] = "rsi";
+                }
                 readCvisUrl(cvisUrl);
             }
         }
