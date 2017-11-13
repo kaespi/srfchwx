@@ -99,18 +99,18 @@ function parseAkamaiToken(e)
 {
     if (this.responseText)
     {
+        // try to parse the response as JSON object
+        var jsonResponse;
+        var responseIsJson = 1;
+        try {
+            jsonResponse = JSON.parse(this.responseText);
+        } catch(e) {
+            responseIsJson = 0;
+        }
+
         for (var k=0; k<m3uUrls[currentTabId].length; k++)
         {
             var urlk = m3uUrls[currentTabId][k];
-
-            // try to parse the response as JSON object
-            var jsonResponse;
-            var responseIsJson = 1;
-            try {
-                jsonResponse = JSON.parse(this.responseText);
-            } catch(e) {
-                responseIsJson = 0;
-            }
 
             if (responseIsJson && jsonResponse.token
                 && jsonResponse.token.authparams)
