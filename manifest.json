@@ -10,6 +10,13 @@
         "url": "https://github.com/kaespi/srfchwx"
     },
 
+    "applications": {
+        "gecko": {
+            "id": "srfch@kgmw.ch",
+            "strict_min_version": "50.0"
+        }
+    },
+
     "icons": {
         "48": "icons/srfch_48.png"
     },
