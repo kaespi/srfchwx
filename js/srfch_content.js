@@ -123,18 +123,31 @@ if (document.documentURI && (document.documentURI.indexOf("rsi.ch") >= 0))
 
 /*
     addRsiVideoBanner():
-    Since on rsi.ch the videos are
+    Since on rsi.ch the videos are loaded in iframes from a different domain (not rsi.ch), we cannot
+    handle the iframe properly. Therefore we need to add a banner to the webpage, right in front of
+    the iframe...
 */
 function addRsiVideoBanner(iframe, urn)
 {
-    // check if this event has already fired and there's already a download link
-    // node added to the page.
-    if (document.getElementsByClassName("srfchaddon").length > 0)
+    // we should not add the same banner multiple times. To prevent so we add the div
+    // an id with the number in the urn
+    var bannerId = '';
+    var urnDigitMatches = urn.match(/\d+/g);
+    if (urnDigitMatches)
+    {
+        bannerId = 'srfchaddonbanner';
+        for (var k=0; k<urnDigitMatches.length; k++)
+        {
+            bannerId += urnDigitMatches[k];
+        }
+    }
+    if (bannerId && document.getElementById(bannerId))
     {
         return;
     }
 
-    var nodeParent = iframe.parentNode;
+    var divIframe = iframe.parentNode;
+    var nodeParent = divIframe.parentNode;
 
     // add the following HTML code to the current document's DOM tree:
     // <div style="text-align:center">
@@ -157,14 +170,14 @@ function addRsiVideoBanner(iframe, urn)
 
     var downloadDiv = document.createElement("div");
     downloadDiv.setAttribute("style", "text-align:center");
+    if (bannerId)
+    {
+        downloadDiv.setAttribute("id", bannerId);
+    }
     downloadDiv.appendChild(downloadImg);
     downloadDiv.appendChild(downloadA);
 
-    // (two) bracket returns
-    downloadDiv.appendChild(document.createElement('br'));
-    downloadDiv.appendChild(document.createElement('br'));
-
-    nodeParent.insertBefore(downloadDiv, iframe);
+    nodeParent.insertBefore(downloadDiv, divIframe);
 }
 
 /*
