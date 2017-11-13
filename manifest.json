@@ -2,8 +2,13 @@
     "manifest_version": 2,
     "name": "SRF.ch",
     "description": "__MSG_extensionDesc__",
-    "version": "2.0",
+    "version": "2.0.0",
     "default_locale": "en",
+    "author": "Kaspar Giger <sftv@kgmw.ch>",
+    "developer": {
+        "name": "Kaspar Giger <sftv@kgmw.ch>",
+        "url": "https://github.com/kaespi/srfchwx"
+    },
 
     "icons": {
         "48": "icons/srfch_48.png"
