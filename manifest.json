@@ -24,6 +24,7 @@
 
     "page_action": {
         "browser_style": true,
+        "default_title": "__MSG_pageActionTooltip__",
         "default_popup": "popup/srfch_copy_link.html",
         "default_icon": {
             "48": "icons/srfch_48.png"
