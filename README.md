@@ -16,7 +16,7 @@ Media files for which M3U playlists are available can be directly played with VL
 
 To download any streams/files avconv is very useful tool, using the following command
 
-avconv -i <url> -codec copy <outputfile> (thanks to flip)
+    avconv -i <url> -codec copy <outputfile> (thanks to flip)
 
 
 The downloaded files can be played with
@@ -32,9 +32,11 @@ avconv - http://www.libav.org/avconv.html
 
 
 Thanks to a hint from a user, the following command could be used to download an M3U file on Linux:
-wget -qO - `wget -qO - <url>`
+
+    wget -qO - `wget -qO - <url>`
 
 Or - as said above - using avconv:
- avconv -i <url> -codec copy <outputfile>
+
+    avconv -i <url> -codec copy <outputfile>
 
 -Kaspar Giger <sftv@kgmw.ch>
