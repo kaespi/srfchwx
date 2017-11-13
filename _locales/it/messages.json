@@ -1,0 +1,22 @@
+{
+    "contextMenuExtract": {
+        "message": "Estrarre $PAGE$ URLs",
+        "description": "Context menu entry on srf.ch webpages",
+        "placeholders": {
+            "page": {
+                "content": "$1",
+                "example": "SRF"
+            }
+        }
+    },
+    
+    "pageActionCopyInstr": {
+        "message": "clic destro per copiare",
+        "description": "Copy instruction in the page action"
+    },
+    
+    "pageActionUntitled": {
+        "message": "Senza titolo",
+        "description": "Untitled string"
+    }
+}

@@ -1,0 +1,27 @@
+{
+    "extensionDesc": {
+        "message": "An extension to display the URLs of video- and audio-files on the Swiss national television webpage (Swiss german srf.ch and italian rsi.ch)",
+        "description": "Description string for the extension"
+    },
+    
+    "contextMenuExtract": {
+        "message": "Extract $PAGE$ URLs",
+        "description": "Context menu entry on srf.ch webpages",
+        "placeholders": {
+            "page": {
+                "content": "$1",
+                "example": "SRF"
+            }
+        }
+    },
+    
+    "pageActionCopyInstr": {
+        "message": "click to copy URL to clipboard",
+        "description": "Copy instruction in the page action"
+    },
+    
+    "pageActionUntitled": {
+        "message": "Untitled",
+        "description": "Untitled string"
+    }
+}

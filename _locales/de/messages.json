@@ -1,0 +1,27 @@
+{
+    "extensionDesc": {
+        "message": "Eine Firefox Erweiterung um die Adressen zu Video und Audio Dateien auf der Webseite von Schweizer Radio und Fernsehen zu extrahieren (deutsche Schweiz srf.ch und italienische Schweiz rsi.ch)",
+        "description": "Description string for the extension"
+    },
+    
+    "contextMenuExtract": {
+        "message": "$PAGE$ URLs extrahieren",
+        "description": "Context menu entry on srf.ch webpages",
+        "placeholders": {
+            "page": {
+                "content": "$1",
+                "example": "SRF"
+            }
+        }
+    },
+    
+    "pageActionCopyInstr": {
+        "message": "URL mit Klick in Zwischenablage kopieren",
+        "description": "Copy instruction in the page action"
+    },
+    
+    "pageActionUntitled": {
+        "message": "Kein Titel",
+        "description": "Untitled string"
+    }
+}

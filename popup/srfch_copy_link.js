@@ -46,11 +46,11 @@ function onGotBg(page)
         var title = page.mediaTitle[popupTabId];
         if (!title)
         {
-            title = "untitled: (click to copy URL)";
+            title = browser.i18n.getMessage("pageActionUntitled");
         }
         var divTitle = window.document.createElement("div");
         divTitle.className = "media-title";
-        var txtTitle = window.document.createTextNode(page.mediaTitle[popupTabId]+": (click to copy URL)");
+        var txtTitle = window.document.createTextNode(title + ": (" + browser.i18n.getMessage("pageActionCopyInstr") + ")");
         divTitle.appendChild(txtTitle);
         window.document.body.appendChild(divTitle);
 

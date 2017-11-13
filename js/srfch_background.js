@@ -33,13 +33,13 @@ function addSrfContextMenu()
     // we're only surfing on one at a time they won't popup at the concurrently
     browser.contextMenus.create({
         id: "srfch_context",
-        title: "Extract SRF URLs",
+        title: browser.i18n.getMessage("contextMenuExtract", "SRF"),
         documentUrlPatterns: ["*://*.srf.ch/*"],
         contexts: ["link"]
     });
     browser.contextMenus.create({
         id: "rsich_context",
-        title: "Extract RSI URLs",
+        title: browser.i18n.getMessage("contextMenuExtract", "RSI"),
         documentUrlPatterns: ["*://*.rsi.ch/*"],
         contexts: ["link"]
     });

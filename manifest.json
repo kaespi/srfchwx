@@ -1,8 +1,9 @@
 {
     "manifest_version": 2,
     "name": "SRF.ch",
-    "description": "An extension to display the URLs of video- and audio-files on the Swiss national television webpage (Swiss german and italian)",
+    "description": "__MSG_extensionDesc__",
     "version": "2.0",
+    "default_locale": "en",
 
     "icons": {
         "48": "icons/srfch_48.png"
