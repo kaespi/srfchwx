@@ -15,6 +15,11 @@
         }
     },
     
+    "bannerText": {
+        "message": "URLs for this video (right-click)",
+        "description": "Text displayed on the banner added to the srf.ch/play or rsi.ch page"
+    },
+
     "pageActionCopyInstr": {
         "message": "click to copy URL to clipboard",
         "description": "Copy instruction in the page action"

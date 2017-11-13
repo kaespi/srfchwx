@@ -10,6 +10,11 @@
         }
     },
     
+    "bannerText": {
+        "message": "URLs per questo video (clic destro)",
+        "description": "Text displayed on the banner added to the srf.ch/play or rsi.ch page"
+    },
+
     "pageActionCopyInstr": {
         "message": "clic destro per copiare",
         "description": "Copy instruction in the page action"

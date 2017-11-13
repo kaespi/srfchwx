@@ -152,7 +152,7 @@ function addRsiVideoBanner(iframe, urn)
     downloadA.dataset.urn = urn;
 
     // set text of link
-    var downloadAtext = document.createTextNode(" Download URLs for this video (right-click)");
+    var downloadAtext = document.createTextNode(" " + browser.i18n.getMessage("bannerText"));
     downloadA.appendChild(downloadAtext);
 
     var downloadDiv = document.createElement("div");
@@ -238,7 +238,7 @@ function addSrfPlayBanner()
             downloadA.setAttribute("href", document.documentURI);
 
             // set text of link
-            var downloadAtext = document.createTextNode(" Download URLs for this video (right-click)");
+            var downloadAtext = document.createTextNode(" " + browser.i18n.getMessage("bannerText"));
             downloadA.appendChild(downloadAtext);
 
             var downloadDiv = document.createElement("div");
