@@ -3,7 +3,7 @@ Changelog SRF.ch
 
 srfch 2.0.0
     * Ported the add-on to the new WebExtensions standard (which resulted in some small
-      changes in its behavior)
+      changes in its appearance and behavior)
 
 srfch 1.2.3
     * Made add-on work with https:// URLs (in a trivial way)
