@@ -14,10 +14,25 @@
             }
         }
     },
-    
+
     "bannerText": {
         "message": "URLs zu diesem Video (Rechtsklick)",
         "description": "Text displayed on the banner added to the srf.ch/play or rsi.ch page"
+    },
+
+    "pageActionTooltip": {
+        "message": "Hier erscheinen die gefundenen SRF/RSI video/audio URLs",
+        "description": "Tooltip for the pageAction"
+    },
+
+    "pageActionNothingFound": {
+        "message": "Keine Video/Audio URLs gefunden. Entweder hast du kein Video/Audio File/Link geklickt oder du musst es erneut versuchen",
+        "description": "Tooltip for the pageAction when nothing was found"
+    },
+
+    "pageActionNUrlsFound": {
+        "message": "Video/Audio URL(s) gefunden. Klicke um sie anzuzeigen",
+        "description": "Tooltip for the pageAction when a number of URLs found"
     },
 
     "pageActionCopyInstr": {

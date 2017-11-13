@@ -49,11 +49,14 @@ function addSrfContextMenu()
     signalMediaAvailable():
     Signal to the popup in the browser toolbar that there are media files available
 */
-function signalMediaAvailable()
+function signalMediaAvailable(numMediaFound)
 {
     var gettingActiveTab = browser.tabs.query({active: true, currentWindow: true});
     gettingActiveTab.then((tabs) => {
         currentTabId = tabs[0].id;
+        browser.pageAction.setTitle({
+            tabId: currentTabId,
+            title: numMediaFound + " " + browser.i18n.getMessage("pageActionNUrlsFound") });
         browser.pageAction.setIcon({
             tabId: currentTabId,
             path: {"48": "icons/srfch_48.png" } });
@@ -67,6 +70,9 @@ function signalMediaAvailable()
 */
 function signalMediaDisable(tabId)
 {
+    browser.pageAction.setTitle({
+        tabId: tabId,
+        title: browser.i18n.getMessage("pageActionTooltip") });
     browser.pageAction.hide(tabId);
     mediaId[tabId] = "";
     mediaTitle[tabId] = "";
@@ -212,7 +218,7 @@ function parseM3uPlaylist(e)
     // as "done"
     if (isLastFileProc)
     {
-        signalMediaAvailable();
+        signalMediaAvailable(media[currentTabId].length);
     }
 }
 
@@ -272,7 +278,7 @@ function extractNonM3uUrlsJson(jsonObj)
 
     if (anyUrlFound)
     {
-        signalMediaAvailable();
+        signalMediaAvailable(media[currentTabId].length);
     }
 
     return anyUrlFound;
@@ -351,7 +357,7 @@ function extractNonM3uUrlsAscii(txt)
 
     if (anyUrlFound)
     {
-        signalMediaAvailable();
+        signalMediaAvailable(media[currentTabId].length);
     }
 
     return anyUrlFound;
@@ -728,6 +734,9 @@ browser.contextMenus.onClicked.addListener(function(info, tab)
             if (info.menuItemId == "srfch_context")
             {
                 // mark as nothing found
+                browser.pageAction.setTitle({
+                    tabId: tab.id,
+                    title: browser.i18n.getMessage("pageActionNothingFound") });
                 browser.pageAction.setIcon({
                     tabId: tab.id,
                     path: {"32": "icons/srfch_disabled_32.png", "48": "icons/srfch_disabled_48.png"} });
@@ -735,6 +744,9 @@ browser.contextMenus.onClicked.addListener(function(info, tab)
             else if (info.menuItemId == "rsich_context")
             {
                 // mark as nothing found
+                browser.pageAction.setTitle({
+                    tabId: tab.id,
+                    title: browser.i18n.getMessage("pageActionNothingFound") });
                 browser.pageAction.setIcon({
                     tabId: tab.id,
                     path: {"32": "icons/rsich_disabled_32.png", "48": "icons/rsich_disabled_48.png"} });
