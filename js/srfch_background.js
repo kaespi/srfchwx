@@ -437,8 +437,9 @@ function extractM3uPlaylist(jsonString)
 
         // ok, for RSI we need some Akamai token to be allowed to read/parse the master.m3u8
         // file we would like to, therefore we have to grad this one first...
-        if (urlk.indexOf("/i/rsi/"))
+        if (urlk.indexOf("/i/rsi/") >= 0)
         {
+            console.log("found token needed: "+urlk);
             m3uUrls[currentTabId][m3uUrls[currentTabId].length] = urlk;
 
             if (!akamaiTokenRequested)
@@ -451,6 +452,24 @@ function extractM3uPlaylist(jsonString)
 
                 // asynchronously read the contents of the given URL
                 oReq.open("GET", "https://tp.srgssr.ch/akahd/token?acl=/i/rsi/*", 1);
+                oReq.send();
+            }
+        }
+        else if (urlk.indexOf("/i/rsi2/") >= 0)
+        {
+            console.log("found token needed: "+urlk);
+            m3uUrls[currentTabId][m3uUrls[currentTabId].length] = urlk;
+
+            if (!akamaiTokenRequested)
+            {
+                akamaiTokenRequested = 1;
+
+                // read the token file using an (asynchronous) HTTP request
+                var oReq = new XMLHttpRequest();
+                oReq.addEventListener("load", parseAkamaiToken);
+
+                // asynchronously read the contents of the given URL
+                oReq.open("GET", "https://tp.srgssr.ch/akahd/token?acl=/i/rsi2/*", 1);
                 oReq.send();
             }
         }
