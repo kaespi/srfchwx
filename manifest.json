@@ -21,6 +21,10 @@
         "48": "icons/srfch_48.png"
     },
 
+    "web_accessible_resources": [
+        "images/*.png"
+    ],
+
     "background": {
         "scripts": [
             "js/srfch_background.js"

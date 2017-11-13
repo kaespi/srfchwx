@@ -178,7 +178,7 @@ function addRsiVideoBanner(iframe, urn)
     // </div>
     var downloadImg = document.createElement("img");
     downloadImg.setAttribute("class", "srfchaddon");
-    downloadImg.setAttribute("src", "http://addons.cdn.mozilla.net/user-media/previews/full/191/191624.png");
+    downloadImg.setAttribute("src", browser.extension.getURL("images/rsich_64.png"));
 
     var downloadA   = document.createElement("a");
     downloadA.setAttribute("href", iframe.src);
@@ -265,7 +265,7 @@ function addSrfPlayBanner()
             // </div>
             var downloadImg = document.createElement("img");
             downloadImg.setAttribute("class", "srfchaddon");
-            downloadImg.setAttribute("src", "http://addons.cdn.mozilla.net/user-media/addon_icons/413/413748-64.png");
+            downloadImg.setAttribute("src", browser.extension.getURL("images/srfch_64.png"));
 
             var downloadA   = document.createElement("a");
             downloadA.setAttribute("href", document.documentURI);
