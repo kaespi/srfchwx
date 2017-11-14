@@ -256,7 +256,7 @@ function addSrfPlayBanner()
             nestedRowElement = document.getElementsByClassName("nestedRow");
         }
 
-        if (nestedRowElement)
+        if (nestedRowElement && (nestedRowElement.length > 0))
         {
             // add the following HTML code to the current document's DOM tree:
             // <div style="text-align:center">
