@@ -34,7 +34,8 @@
     "content_scripts": [
         {
             "matches": ["*://*.srf.ch/*", "*://*.rsi.ch/*"],
-            "js": ["js/srfch_content.js"]
+            "js": ["js/srfch_content.js"],
+            "run_at": "document_start"
         }
     ],
 
