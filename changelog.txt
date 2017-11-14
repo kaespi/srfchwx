@@ -1,6 +1,9 @@
 Changelog SRF.ch
 ================
 
+srfch 2.0.2
+    * Fix appearance of banners on srf.ch/play and rsi.ch pages
+
 srfch 2.0.1
     * Only refer to this add-ons internal files in the banners on rsi.ch and srf.ch/play
     * Better triggering adding the banner on srf.ch/play and rsi.ch pages
