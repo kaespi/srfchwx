@@ -135,6 +135,44 @@ window.addEventListener("mousedown", function(event) {
                 }
             }
         }
+        else
+        {
+            // looks like it's the "new" way how this is represented on the srf.ch webpage (found it first in
+            // September 2021). We can find the ID in one of the target's parent which has it encoded in the
+            // "id" attribute or the .data.assetid entry.
+            var testNode = event.target.parentNode;
+            for (let i=0; i<6; i++)
+            {
+                if (testNode.hasAttribute("id"))
+                {
+                    var idAttr = testNode.getAttribute("id");
+                    var idMatch = idAttr.match(/player-wrapper__urn-srf-([a-z]+)-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/);
+                    if (idMatch)
+                    {
+                        idStr = "urn:srf:" + idMatch[1] + ":" + idMatch[2];
+                        break;
+                    }
+                }
+
+                if (testNode.dataset.assetid &&
+                    testNode.dataset.assetid.match(/urn:srf:[a-z]+:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/))
+                {
+                    idStr = testNode.dataset.assetid;
+                    break;
+                }
+
+                if (testNode.parentNode)
+                {
+                    // if it's not this element, it could be its parent where the information is available
+                    testNode = testNode.parentNode;
+                }
+                else
+                {
+                    // no more climbing up the DOM tree
+                    break;
+                }
+            }
+        }
 
         // if the string with the ID was set then we can forward this information (via a
         // message) to the background script which can then do the actual extraction of

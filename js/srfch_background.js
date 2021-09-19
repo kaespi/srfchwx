@@ -67,7 +67,7 @@ function addSrfContextMenu()
         id: "srfch_context",
         title: browser.i18n.getMessage("contextMenuExtract", "SRF"),
         documentUrlPatterns: ["*://*.srf.ch/*"],
-        contexts: ["link"]
+        contexts: ["link", "image", "page"]
     });
     browser.contextMenus.create({
         id: "rsich_context",
