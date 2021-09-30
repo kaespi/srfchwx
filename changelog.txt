@@ -1,6 +1,9 @@
 Changelog SRF.ch
 ================
 
+srfch 2.0.3
+    * Adapt media extraction to the latest appearance of the srf.ch webpage
+
 srfch 2.0.2
     * Fix appearance of banners on srf.ch/play and rsi.ch pages
 
