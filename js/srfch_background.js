@@ -249,9 +249,9 @@ function parseM3uPlaylist(e)
         if (isNewEntry)
         {
             media[currentTabId][media[currentTabId].length] = {
-                    'guessed': false,
-                    'url': thisStreamURL,
-                    'desc': 'M3U: ' + mediaFilePlaylist[i].substring(18,idxNewline)
+                    "guessed": false,
+                    "url": thisStreamURL,
+                    "desc": "M3U: " + mediaFilePlaylist[i].substring(18,idxNewline)
                 };
         }
     }
@@ -287,7 +287,7 @@ function extractNonM3uUrlsJson(jsonObj)
                     {
                         // found an URL, but now we also need to have some descriptive
                         // string for the URL (indicating the quality e.g.)
-                        var desc = '';
+                        var desc = "";
                         if (jsonObj.chapterList.length > 1 && chapter.title)
                         {
                             desc = chapter.title + ": ";
@@ -306,9 +306,9 @@ function extractNonM3uUrlsJson(jsonObj)
                         }
 
                         media[currentTabId][media[currentTabId].length] = {
-                                'guessed': false,
-                                'url': res.url,
-                                'desc': desc
+                                "guessed": false,
+                                "url": res.url,
+                                "desc": desc
                             };
 
                         anyUrlFound = 1;
@@ -358,9 +358,9 @@ function extractNonM3uUrlsAscii(txt)
             {
                 anyUrlFound = 1;
                 media[currentTabId][media[currentTabId].length] = {
-                        'guessed': false,
-                        'url': url_k,
-                        'desc': url_k
+                        "guessed": false,
+                        "url": url_k,
+                        "desc": url_k
                     };
             }
         }
@@ -389,9 +389,9 @@ function extractNonM3uUrlsAscii(txt)
             {
                 anyUrlFound = 1;
                 media[currentTabId][media[currentTabId].length] = {
-                        'guessed': false,
-                        'url': url_k,
-                        'desc': url_k
+                        "guessed": false,
+                        "url": url_k,
+                        "desc": url_k
                     };
             }
         }
@@ -706,7 +706,7 @@ function srfchProcMsg(request, sender, sendResponse)
 {
     // if we got the tab-id already with the command, then we don't
     // have to extract it once more...
-    if (sender.tab && (typeof sender.tab.id !== 'undefined'))
+    if (sender.tab && (typeof sender.tab.id !== "undefined"))
     {
         currentTabId = sender.tab.id;
 

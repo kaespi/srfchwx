@@ -86,14 +86,14 @@ window.addEventListener("mousedown", function(event) {
     // (this will probably trigger the context menu to pop up)
     if (event.button == 2)
     {
-        var idStr = '';
+        var idStr = "";
 
         // check if (right-) clicked on a link
-        if (event.target && event.target.closest('a'))
+        if (event.target && event.target.closest("a"))
         {
             // check if the "urn" data attribute is set, then we can easily extract the
             // media's ID from it
-            var elemA = event.target.closest('a');
+            var elemA = event.target.closest("a");
             if (elemA.dataset.urn)
             {
                 idStr = elemA.dataset.urn;
@@ -129,7 +129,7 @@ window.addEventListener("mousedown", function(event) {
                 // if we didn't find the "urn" data attribute yet, then we can try to extract
                 // the ID from the "href" attribute of the link node. To do so, try to find
                 // the ID using a regex
-                if (idStr=='' && hrefAttr.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/))
+                if (idStr=="" && hrefAttr.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/))
                 {
                     idStr = hrefAttr;
                 }
@@ -167,7 +167,7 @@ function getIdWithIdAttr(startingNode)
 {
     // Let's try to find the ID in one of the node's parent which has it encoded in the 
     // "id" attribute or the .data.assetid entry.
-    var idStr = '';
+    var idStr = "";
     var testNode = startingNode;
     for (let i=0; i<6; i++)
     {
@@ -211,7 +211,7 @@ function getIdWithIdAttr(startingNode)
 */
 function getIdWithPlayerCtrl(startingNode)
 {
-    var idStr = '';
+    var idStr = "";
     var parentNode = startingNode;
     for (let levelUp=0; levelUp<6 && !idStr; levelUp++)
     {
@@ -239,8 +239,8 @@ function getIdWithPlayerCtrl(startingNode)
 */
 function getIdStrFromAHref(node, maxLevelDown, levelDown)
 {
-    var idStr = '';
-    if (node.nodeName.toLowerCase()=='a')
+    var idStr = "";
+    if (node.nodeName.toLowerCase()=="a")
     {
         // found an <a ...> node. Let's see if it contains in its href-attribute
         // the potential ID
@@ -248,7 +248,7 @@ function getIdStrFromAHref(node, maxLevelDown, levelDown)
         var idMatch = hrefAttr.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
         if (idMatch)
         {
-            idStr = 'urn:srf:video:' + idMatch[0];
+            idStr = "urn:srf:video:" + idMatch[0];
         }
     }
     else
@@ -277,11 +277,11 @@ function addRsiVideoBanner(iframe, urn)
 {
     // we should not add the same banner multiple times. To prevent so we add the div
     // an id with the number in the urn
-    var bannerId = '';
+    var bannerId = "";
     var urnDigitMatches = urn.match(/\d+/g);
     if (urnDigitMatches)
     {
-        bannerId = 'srfchaddonbanner';
+        bannerId = "srfchaddonbanner";
         for (var k=0; k<urnDigitMatches.length; k++)
         {
             bannerId += urnDigitMatches[k];
@@ -351,7 +351,7 @@ function addSrfPlayBanner()
         for (var i=0; i<metaElements.length; i++)
         {
             var siteName = 0;
-            var content = '';
+            var content = "";
             for (var k=0; k<metaElements[i].attributes.length; k++)
             {
                 if (metaElements[i].attributes[k].name === "property"
@@ -406,8 +406,8 @@ function addSrfPlayBanner()
             downloadDiv.appendChild(downloadA);
 
             // (two) bracket returns
-            downloadDiv.appendChild(document.createElement('br'));
-            downloadDiv.appendChild(document.createElement('br'));
+            downloadDiv.appendChild(document.createElement("br"));
+            downloadDiv.appendChild(document.createElement("br"));
 
             var rowParent = nestedRowElement[0].parentElement;
             rowParent.insertBefore(downloadDiv, nestedRowElement[0]);
