@@ -138,39 +138,16 @@ window.addEventListener("mousedown", function(event) {
         else
         {
             // looks like it's the "new" way how this is represented on the srf.ch webpage (found it first in
-            // September 2021). We can find the ID in one of the target's parent which has it encoded in the
+            // September 2021). We might find the ID in one of the target's parent which has it encoded in the
             // "id" attribute or the .data.assetid entry.
-            var testNode = event.target.parentNode;
-            for (let i=0; i<6; i++)
+            idStr = getIdWithIdAttr(event.target.parentNode);
+
+            if (!idStr)
             {
-                if (testNode.hasAttribute("id"))
-                {
-                    var idAttr = testNode.getAttribute("id");
-                    var idMatch = idAttr.match(/player-wrapper__urn-srf-([a-z]+)-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/);
-                    if (idMatch)
-                    {
-                        idStr = "urn:srf:" + idMatch[1] + ":" + idMatch[2];
-                        break;
-                    }
-                }
-
-                if (testNode.dataset.assetid &&
-                    testNode.dataset.assetid.match(/urn:srf:[a-z]+:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/))
-                {
-                    idStr = testNode.dataset.assetid;
-                    break;
-                }
-
-                if (testNode.parentNode)
-                {
-                    // if it's not this element, it could be its parent where the information is available
-                    testNode = testNode.parentNode;
-                }
-                else
-                {
-                    // no more climbing up the DOM tree
-                    break;
-                }
+                // ok, we didn't find the ID in one of the target's parents. We might be on a srf.ch/play/...
+                // page and the user clicked the "main video element". If that's the case, let's apply some magic to
+                // get the ID. It might be encoded in some element which is used to handle the player controls
+                idStr = getIdWithPlayerCtrl(event.target);
             }
         }
 
@@ -180,6 +157,115 @@ window.addEventListener("mousedown", function(event) {
         browser.runtime.sendMessage({srfchId: idStr});
     }
 }, true);
+
+/*
+    getIdWithIdAttr():
+    Try to extract the ID from from any of the parents of "startingNode" by looking for an
+    "id"-attribute.
+*/
+function getIdWithIdAttr(startingNode)
+{
+    // Let's try to find the ID in one of the node's parent which has it encoded in the 
+    // "id" attribute or the .data.assetid entry.
+    var idStr = '';
+    var testNode = startingNode;
+    for (let i=0; i<6; i++)
+    {
+        if (testNode.hasAttribute("id"))
+        {
+            var idAttr = testNode.getAttribute("id");
+            var idMatch = idAttr.match(/player-wrapper__urn-srf-([a-z]+)-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/);
+            if (idMatch)
+            {
+                idStr = "urn:srf:" + idMatch[1] + ":" + idMatch[2];
+                break;
+            }
+        }
+
+        if (testNode.dataset.assetid &&
+            testNode.dataset.assetid.match(/urn:srf:[a-z]+:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/))
+        {
+            idStr = testNode.dataset.assetid;
+            break;
+        }
+
+        if (testNode.parentNode)
+        {
+            // if it's not this element, it could be its parent where the information is available
+            testNode = testNode.parentNode;
+        }
+        else
+        {
+            // no more climbing up the DOM tree
+            break;
+        }
+    }
+
+    return idStr;
+}
+
+/*
+    getIdWithPlayerCtrl():
+    Try to obtain the media ID by crawling up and down the DOM tree starting from some
+    note "startingNode". The ID might be encoded in an <a ...> node's href attribute.
+*/
+function getIdWithPlayerCtrl(startingNode)
+{
+    var idStr = '';
+    var parentNode = startingNode;
+    for (let levelUp=0; levelUp<6 && !idStr; levelUp++)
+    {
+        idStr = getIdStrFromAHref(parentNode, 4, 0);
+
+        if (parentNode.parentNode)
+        {
+            // if it's not this element, it could be its parent where the information is available
+            parentNode = parentNode.parentNode;
+        }
+        else
+        {
+            // no more climbing up the DOM tree
+            break;
+        }
+    }
+
+    return idStr;
+}
+
+/*
+    getIdStrFromAHref():
+    Tries to extract the media ID from this node (if it's an <a ...> node and has a href
+    attribute with the ID encoded). Otherwise recursively processes all the node's children.
+*/
+function getIdStrFromAHref(node, maxLevelDown, levelDown)
+{
+    var idStr = '';
+    if (node.nodeName.toLowerCase()=='a')
+    {
+        // found an <a ...> node. Let's see if it contains in its href-attribute
+        // the potential ID
+        var hrefAttr = node.getAttribute("href");
+        var idMatch = hrefAttr.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/);
+        if (idMatch)
+        {
+            idStr = 'urn:srf:video:' + idMatch[0];
+        }
+    }
+    else
+    {
+        if (node.hasChildNodes())
+        {
+            levelDown++;
+            let children = node.childNodes;
+            for (let k=0; k < children.length && !idStr; k++)
+            {
+                idStr = getIdStrFromAHref(children[k], maxLevelDown, levelDown);
+            }
+        }
+    }
+
+    return idStr;
+}
 
 /*
     addRsiVideoBanner():
