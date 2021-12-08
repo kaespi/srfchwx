@@ -30,4 +30,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: 'Firefox Artifacts'
-          path: ${{ steps.web-ext-sign.outputs.target }}
+          path: ${{ steps.web-ext-build.outputs.target }}
