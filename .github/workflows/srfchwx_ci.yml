@@ -26,8 +26,8 @@ jobs:
           cmd: build
           source: src
 
-      - name: "Upload Artifact"
-        uses: actions/upload-artifact@master
+      - name: "Upload artifacts"
+        uses: actions/upload-artifact@v2
         with:
-          name: srfch.xpi
-          path: ${{ steps.web-ext-build.outputs.target }}
+          name: 'Firefox Artifacts'
+          path: ${{ steps.web-ext-sign.outputs.target }}
