@@ -29,5 +29,5 @@ jobs:
       - name: "Upload artifacts"
         uses: actions/upload-artifact@v2
         with:
-          name: srfch.zip
+          name: 'SRF.ch Firefox extension'
           path: ${{ steps.web-ext-build.outputs.target }}
