@@ -1,7 +1,8 @@
 SRF.ch
  ***
-A Firefox extension to display the URLs of video- and audio-files on the Swiss national radio and television webpage (www.srf.ch), using the new WebExtensions format
+A Firefox extension to display the URLs of video- and audio-files on the Swiss national radio and television webpage (www.srf.ch), using the new WebExtensions format.
 
+The extension is published on https://addons.mozilla.org/en-US/firefox/addon/srfch/.
 
 This extension simply extracts the URLs of the video- and audio-files on the SRF (Schweizer Radio und Fernsehen, Swiss german national television and radio) and the RSI (Radiotelevisione Svizzera, Swiss italian national television and radio) webpage, www.srf.ch and www.rsi.ch respectively. After right-clicking on a video or audio link (or a banner which this extension sometimes adds to the pages) you can start extracting/grabbing the corresponding URLs by clicking on the context menu entry ("Extract SRF/RSI URLs"). If some URLs are then found an SRF/RSI icon will popup in the address bar of the browser. This one adds a dropdown menu from where you can copy the URLs by clicking on any of the dropdown entries.
 
@@ -14,9 +15,9 @@ The media files can (only?) be transfered via the RTMP protocol. Flash players h
 
 Media files for which M3U playlists are available can be directly played with VLC or any other player understanding the M3U format.
 
-To download any streams/files avconv is very useful tool, using the following command
+To download any streams/files ffmpeg is very useful tool, using the following command
 
-    avconv -i <url> -codec copy <outputfile> (thanks to flip)
+    ffmpeg -i <url> -codec copy <outputfile> (thanks to flip)
 
 
 The downloaded files can be played with
@@ -26,17 +27,17 @@ The downloaded files can be played with
    the audio files are of MPEG audio format (not mp3!). They can also be played with VLC.
 
 Helpful software:
-VLC player  - http://www.videolan.org/vlc
-FLVstreamer - http://www.nongnu.org/flvstreamer
-avconv - http://www.libav.org/avconv.html
+ * [VLC player](http://www.videolan.org/vlc)
+ * [FLVstreamer](http://www.nongnu.org/flvstreamer)
+ * [ffmpeg](http://www.ffmpeg.org/)
 
 
 Thanks to a hint from a user, the following command could be used to download an M3U file on Linux:
 
     wget -qO - `wget -qO - <url>`
 
-Or - as said above - using avconv:
+Or - as said above - using ffmpeg:
 
-    avconv -i <url> -codec copy <outputfile>
+    ffmpeg -i <url> -codec copy <outputfile>
 
 -Kaspar Giger <sftv@kgmw.ch>
