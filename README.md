@@ -1,3 +1,6 @@
+![SRF.ch build status](https://github.com/kasepi/srfchwx/actions/workflows/srfchwx_ci.yml/badge.svg)
+
+
 SRF.ch
  ***
 A Firefox extension to display the URLs of video- and audio-files on the Swiss national radio and television webpage (www.srf.ch), using the new WebExtensions format.
