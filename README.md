@@ -1,4 +1,4 @@
-![SRF.ch build status](https://github.com/kasepi/srfchwx/actions/workflows/srfchwx_ci.yml/badge.svg)
+![SRF.ch build status](https://github.com/kaespi/srfchwx/actions/workflows/srfchwx_ci.yml/badge.svg)
 
 
 SRF.ch
