@@ -25,6 +25,7 @@ jobs:
         with:
           cmd: build
           source: src
+          filename: '{name}-{version}.xpi'
 
       - name: "Upload artifacts"
         uses: actions/upload-artifact@v2
