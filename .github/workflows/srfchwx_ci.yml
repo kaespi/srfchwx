@@ -21,10 +21,11 @@ jobs:
 
       - name: "web-ext build"
         id: web-ext-build
-        uses: kewisch/action-web-ext@v1
+        uses: kaespi/action-web-ext@kg_artifcat_customization
         with:
           cmd: build
           source: src
+          filename: '{name}-{version}.xpi'
 
       - name: "Upload artifacts"
         uses: actions/upload-artifact@v2
