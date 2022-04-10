@@ -13,13 +13,13 @@ This a short description of how the media URLs are derived.
 
 ### Step 1: get the media's unique ID
 
-Each video/audio has its own unique ID. The ID follows the regex `[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`, e.g. 9f755253-7ccd-40f9-81a9-15f6b73dd4c7. The task of the browser extension is to find this ID in the page's DOM tree starting from the element which was right-clicked. Naturally, the page's look changes every now and then, hence there are various ways to obtain the ID and they need to be updated sometimes. 
+Each video/audio has its own unique ID. The ID follows the regex `[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`, e.g. 9f755253-7ccd-40f9-81a9-15f6b73dd4c7. The task of the browser extension is to find this ID in the page's DOM tree starting from the element which was right-clicked. Naturally, the page's look changes every now and then, hence there are various ways to obtain the ID and they need to be updated sometimes.
 
 ### Step 2: get the media's different streams
 
 Once the ID was obtained, the different streams for the video/audio can be found in a JSON file from srgssr.ch server. Namely the JSON file can be found
- * for srf.ch videos: `http://il.srgssr.ch/integrationlayer/1.0/ue/srf/video/play/<ID>.json` 
- * for srf.ch audios: `https://il.srgssr.ch/integrationlayer/2.0/srf/mediaComposition/audio/<ID>.json` 
+ * for srf.ch videos: `https://il.srgssr.ch/integrationlayer/2.0/mediaComposition/byUrn/urn:srf:video:<ID>.json`;
+ * for srf.ch audios: `https://il.srgssr.ch/integrationlayer/2.0/srf/mediaComposition/audio/<ID>.json`
  * for rsi.ch stuff: `http://il.srgssr.ch/integrationlayer/1.0/ue/rsi/video/play/<ID>.json`
 
 Replace the `<ID>` above by the media's unique ID as obtained in step 1.

@@ -1,6 +1,11 @@
 Changelog SRF.ch
 ================
 
+srfch 2.0.4
+    * Adapt URL for JSON file to extract media meta data on srf.ch webpage
+      (https://il.srgssr.ch/integrationlayer/2.0/mediaComposition/byUrn/urn:srf:video:<ID>.json
+      instead of previous http://il.srgssr.ch/integrationlayer/1.0/ue/srf/video/play/<ID>.json)
+
 srfch 2.0.3
     * Adapt media extraction to the latest appearance of the srf.ch webpage
 

@@ -685,7 +685,7 @@ function getCvisUrl(linkurl)
         }
         else if (linkurl.indexOf("video")>=0)
         {
-            return "http://il.srgssr.ch/integrationlayer/1.0/ue/srf/video/play/"+idStr+".json";
+            return "https://il.srgssr.ch/integrationlayer/2.0/mediaComposition/byUrn/urn:srf:video:"+idStr+".json";
         }
         else
         {
